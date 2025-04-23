@@ -10,6 +10,14 @@ const app      = express();
 const PORT     = process.env.PORT || 3001;
 const SHEET_ID = "1qUPE8PXticebtACDkqPK7xBf1c-NZKzeQtx7db-fAAM";
 
+const basicAuth = require("express-basic-auth");
+
+// wymagaj logowania na każdy request:
+app.use(basicAuth({
+  users: { "admin": "hasło123" },
+  challenge: true
+}));
+
 // — middleware —
 app.use(cors());
 app.use(express.json());
