@@ -1,0 +1,72 @@
+{
+  "name": "freak_fight_app",
+  "version": "0.0.1",
+  "author": "Mateusz",
+  "main": "main.js",
+  "homepage": "./",
+  "proxy": "http://localhost:3001",
+  "scripts": {
+    "clean": "rimraf dist release build",
+    "start": "react-scripts start",
+    "react-start": "react-scripts start",
+    "server-dev": "node freak-fight-server/index.js",
+    "electron-dev": "electron .",
+    "dev": "cross-env NODE_ENV=development concurrently -k \"npm:server-dev\" \"npm:react-start\" \"wait-on http://localhost:3000 && npm:electron-dev\"",
+    "build-react": "cross-env PUBLIC_URL=./ react-scripts build",
+    "build-server": "cpx \"freak-fight-server/**/*\" dist/server",
+    "build-renderer": "cpx \"build/**/*\" dist/renderer",
+    "build": "npm run clean && npm run build-react && npm run build-server && npm run build-renderer",
+    "dist": "npm run build && electron-builder --win"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "google-spreadsheet": "^3.3.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.11.2",
+    "react-slick": "^0.30.3",
+    "slick-carousel": "^1.8.1"
+  },
+  "devDependencies": {
+    "concurrently": "^8.0.1",
+    "cpx": "^1.5.0",
+    "cross-env": "^7.0.3",
+    "electron": "^35.2.0",
+    "electron-builder": "^23.6.0",
+    "react-scripts": "5.0.1",
+    "rimraf": "^5.0.10",
+    "wait-on": "^7.0.1"
+  },
+  "build": {
+    "appId": "com.freakfight.app",
+    "productName": "FreakFightApp",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "main.js",
+      "package.json",
+      "dist/**/*"
+    ],
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "icon": "assets/icon.ico",
+      "artifactName": "${productName}-Setup-${version}.${ext}"
+    }
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

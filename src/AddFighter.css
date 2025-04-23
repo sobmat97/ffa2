@@ -1,0 +1,27 @@
+/* FightersPage.css / AddFighter.css */
+
+/* Kontener strony */
+.fighters-page, .add-fighter-page {
+    position: relative; /* Ustawiamy pozycjonowanie na relative, żeby przycisk był pozycjonowany względem tego kontenera */
+    padding: 20px;
+  }
+  
+  /* Stylizacja przycisku "Wróć" */
+  .btn-back {
+    position: absolute; /* Pozycjonowanie absolutne */
+    top: 20px; /* Odległość od góry */
+    right: 20px; /* Odległość od prawej krawędzi */
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    transition: background-color 0.3s ease;
+    border-radius: 5px;
+  }
+  
+  .btn-back:hover {
+    background-color: #0056b3;
+  }
+  

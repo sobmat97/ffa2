@@ -1,0 +1,77 @@
+/* tło całości */
+.fighters-page {
+  background-image: url("./images/fighterbc.jpg");
+  background-repeat: no-repeat;
+  background-position: center top;
+  background-attachment: fixed;
+  background-size: 150%;
+  min-height: 100vh;
+  padding: 40px 0;          /* trochę odstępu góra/dół */
+  box-sizing: border-box;
+}
+
+/* zawartość na białym tle, wycentrowana i z max szerokością */
+.fighters-page .inner {
+  max-width: 1220px;
+  margin: 20px;
+  background: rgba(255,255,255,0.95);
+  padding: 20px 30px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+/* Panel sterowania */
+.controls-panel {
+  position: sticky;
+  top: 0;
+  z-index: 5;                              /* ponad tabelą */
+  background: rgba(255,255,255,0.95);      /* to samo tło co wcześniej */
+  padding-top: 10px;                       /* upewnij się że sass ma spacing */
+  padding-bottom: 10px;
+}
+
+table th {
+  position: sticky;
+  top: 65px;       /* <-- jeśli panel ma inną wysokość, ustaw tu wartość w px */
+  z-index: 3;
+}
+
+.column-toggles label {
+  margin-right: 15px;
+  font-weight: bold;
+}
+.filter input {
+  padding: 4px 8px;
+  font-size: 1rem;
+}
+
+/* Tabela */
+table {
+  width: 100%;
+  border-collapse: collapse;   /* jedne linie pomiędzy komórkami */
+  margin-top: 10px;
+}
+th, td {
+  border: 1px solid #888;
+  padding: 8px 10px;
+  text-align: left;
+}
+th {
+  background: #f0f0f0;
+  position: sticky;    /* nagłówek przyklejony na górze */
+  top: 0;
+  z-index: 1;
+}
+th.sortable {
+  cursor: pointer;
+}
+th.sortable:hover {
+  background: #e0e0e0;
+}
+
+/* Komunikat błędu */
+.error {
+  color: red;
+  font-weight: bold;
+  margin: 20px 0;
+}

@@ -1,0 +1,32 @@
+/* src/index.css */
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: 'Fira Sans', sans-serif;
+}
+
+.app-container {
+  display: flex;
+  min-height: 100vh;
+  font-family: sans-serif;
+}
+
+.main-panel {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.app-container {
+  display: flex;
+  min-height: 100vh;
+  font-family: sans-serif;
+  background-color: #f4f4f4;
+}
+
+.main-panel {
+  flex: 1;
+  padding: 40px;
+  background-color: #fff;
+}
