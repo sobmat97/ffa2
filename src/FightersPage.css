@@ -1,77 +1,185 @@
-/* tło całości */
-.fighters-page {
-  background-image: url("./images/fighterbc.jpg");
-  background-repeat: no-repeat;
-  background-position: center top;
-  background-attachment: fixed;
-  background-size: 150%;
-  min-height: 100vh;
-  padding: 40px 0;          /* trochę odstępu góra/dół */
-  box-sizing: border-box;
-}
-
-/* zawartość na białym tle, wycentrowana i z max szerokością */
 .fighters-page .inner {
-  max-width: 1220px;
-  margin: 20px;
-  background: rgba(255,255,255,0.95);
-  padding: 20px 30px;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 0 10px;
 }
 
-/* Panel sterowania */
-.controls-panel {
-  position: sticky;
-  top: 0;
-  z-index: 5;                              /* ponad tabelą */
-  background: rgba(255,255,255,0.95);      /* to samo tło co wcześniej */
-  padding-top: 10px;                       /* upewnij się że sass ma spacing */
-  padding-bottom: 10px;
-}
-
-table th {
-  position: sticky;
-  top: 65px;       /* <-- jeśli panel ma inną wysokość, ustaw tu wartość w px */
-  z-index: 3;
-}
-
-.column-toggles label {
-  margin-right: 15px;
-  font-weight: bold;
-}
-.filter input {
-  padding: 4px 8px;
-  font-size: 1rem;
-}
-
-/* Tabela */
 table {
   width: 100%;
-  border-collapse: collapse;   /* jedne linie pomiędzy komórkami */
+  border-collapse: collapse;
   margin-top: 10px;
 }
-th, td {
-  border: 1px solid #888;
-  padding: 8px 10px;
+thead th {
+  background: #f7f7f7;
+  color: #000000;
+  padding: 8px;
+  position: sticky;
+  top: 0;
+  z-index: 2;
   text-align: left;
 }
-th {
-  background: #f0f0f0;
-  position: sticky;    /* nagłówek przyklejony na górze */
-  top: 0;
-  z-index: 1;
+tbody td {
+  padding: 6px 8px;
+  border-bottom: 1px solid #000000;
 }
-th.sortable {
+tbody tr:hover {
+  background: #ffffff;
   cursor: pointer;
 }
-th.sortable:hover {
-  background: #e0e0e0;
+.clickable-row button {
+  cursor: pointer;
 }
 
-/* Komunikat błędu */
-.error {
-  color: red;
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  top:0;left:0;right:0;bottom:0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+.modal-content {
+  background: #ffffff;
+  padding: 20px;
+  max-width: 90%;
+  max-height: 80%;
+  overflow: auto;
+  border-radius: 8px;
+  position: relative;
+}
+.close-btn {
+  position: absolute;
+  top:8px; right:12px;
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+/* Fights table inside modal */
+.fighters-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.fighters-table th,
+.fighters-table td {
+  border: 1px solid #000000;
+  padding: 8px 12px;
+}
+
+.fighters-table th.sortable {
+  cursor: pointer;
+}
+
+
+
+/* pełne podświetlenie komórki */
+.fighters-table td.last-fight-win {
+  background-color: rgba(144, 238, 144, 0.4);
+}
+
+.fighters-table td.last-fight-loss {
+  background-color: rgba(240, 128, 128, 0.4);
+}
+
+.fighters-table td.last-fight-draw {
+  background-color: rgba(200, 200, 200, 0.2);
+}
+
+/* Kolor całego wiersza w modal-table */
+.modal-table tr.row-win {
+  background-color: rgba(144, 238, 144, 0.3);
+}
+.modal-table tr.row-loss {
+  background-color: rgba(240, 128, 128, 0.3);
+}
+.modal-table tr.row-draw {
+  background-color: rgba(200, 200, 200, 0.2);
+}
+
+/* Podstawowe style tabeli w modalu */
+.modal-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+.modal-table th,
+.modal-table td {
+  border: 1px solid #ddd;
+  padding: 0.5rem;
+  text-align: left;
+}
+
+
+
+/* nowy styl avatara w modal-u */
+.profile-avatar {
+  max-width: 150px;
+  max-height: 200px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+/* ===== profil w flexie ===== */
+.profile-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.profile-avatar {
+  flex-shrink: 0;
+  width: 150px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+  background: #f0f0f0;
+}
+
+/* kontener z danymi po prawej */
+.profile-details {
+  flex: 1;
+}
+
+/* formularz uploadu */
+.avatar-upload {
+  margin-top: 1rem;
+}
+.avatar-upload input[type="file"] {
+  display: block;
+  margin-bottom: 0.5rem;
+}
+.avatar-upload button {
+  padding: 0.4rem 0.8rem;
+  border: none;
+  background: #4caf50;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.avatar-upload button:disabled {
+  background: #ccc;
+  cursor: default;
+}
+
+.profile-info {
+  margin: 0 0 1rem;
+  padding: 0;
+}
+.profile-field {
+  display: flex;
+  margin-bottom: 0.5rem;
+}
+.profile-label {
+  flex: 0 0 120px;   /* stała szerokość etykiety */
   font-weight: bold;
-  margin: 20px 0;
+}
+.profile-value {
+  flex: 1;
 }

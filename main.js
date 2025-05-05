@@ -1,35 +1,42 @@
-const path = require("path");
-const { app, BrowserWindow } = require("electron");
+const { app, BrowserWindow } = require('electron');
+const path = require('path');
 
 let win;
 
 function createWindow() {
+  // Tworzymy nowe okno przeglądarki
   win = new BrowserWindow({
-    width: 1024,
-    height: 768,
+    width: 1920,
+    height: 1080,
     webPreferences: {
       nodeIntegration: true,
-      contextIsolation: false
     },
   });
 
-  const startUrl = app.isPackaged
-    ? `file://${path.join(__dirname, "dist/renderer/index.html")}`
-    : "http://localhost:3000";
+  // Ładujemy stronę React z folderu build
+  win.loadURL(`file://${path.join(__dirname, 'build', 'index.html')}`);  // Jeśli używasz lokalnego pliku
 
-  win.loadURL(startUrl);
-
-  win.on("closed", () => {
+  win.on('closed', () => {
     win = null;
   });
 }
 
-app.whenReady().then(createWindow);
+// Uruchamiamy aplikację Electron, kiedy jest gotowa
+app.on('ready', createWindow);
 
-app.on("window-all-closed", () => {
-  if (process.platform !== "darwin") app.quit();
+// Wyjście z aplikacji, gdy wszystkie okna są zamknięte
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') {
+    app.quit();
+  }
 });
 
-app.on("activate", () => {
-  if (!win) createWindow();
-});
+app.on('activate', () => {
+  if (win === null) {
+    createWindow();
+  }
+}
+
+
+
+);

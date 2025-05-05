@@ -1,0 +1,25 @@
+/* src/EloPage.css */
+.elo-page {
+    padding: 1.5rem;
+  }
+  .elo-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 1rem;
+    align-items: end;
+  }
+  .elo-form fieldset {
+    grid-column: span 3;
+    border: 1px solid #ddd;
+    padding: 0.5rem;
+  }
+  .elo-form button {
+    padding: 0.5rem 1rem;
+  }
+  .elo-result {
+    margin-top: 1.5rem;
+    background: #f9f9f9;
+    padding: 1rem;
+    border-radius: 0.5rem;
+  }
+  

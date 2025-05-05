@@ -1,72 +1,39 @@
-/* tło całości */
-.events-page {
-  background-image: url("./images/eventsbc.jpg");
-  background-repeat: no-repeat;
-  background-position: center top;
-  background-attachment: fixed;
-  background-size: 150%;
-  min-height: 100vh;
-  padding: 40px 0;
-  box-sizing: border-box;
+.elo-page {
+  padding: 1.5rem;
 }
-
-/* zawartość na białym tle, wycentrowana i z max szerokością */
-.events-page .inner {
-  max-width: 1200px;
-  margin: 20px auto;
-  background: rgba(255,255,255,0.95);
-  padding: 20px 30px;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-}
-
-/* Panel sterowania (formularz dodawania + ewentualne filtry) */
-.controls-panel {
-  position: sticky;
-  top: 0;
-  z-index: 5;
-  background: rgba(255,255,255,0.95);
-  padding: 10px 0;
-  margin-bottom: 15px;
-}
-
-/* formularz dodawania */
-.add-event-form {
+.elo-form {
   display: grid;
-  grid-template-columns: repeat(auto-fit,minmax(200px,1fr));
-  gap: 12px;
-  margin-bottom: 20px;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 1rem;
+  align-items: end;
 }
-.add-event-form label {
-  display: block;
-  font-weight: bold;
+.elo-form fieldset {
+  grid-column: span 3;
+  border: 1px solid #ddd;
+  padding: 0.5rem;
 }
-.add-event-form input {
-  width: 100%;
-  padding: 4px 8px;
+.elo-form button {
+  padding: 0.5rem 1rem;
+}
+.elo-result {
+  margin: 1rem 0;
+  background: #f9f9f9;
+  padding: 1rem;
+  border-radius: 0.5rem;
 }
 
-/* Tabela */
+/* odziedziczone z EventsPage */
 .events-table {
   width: 100%;
   border-collapse: collapse;
+  margin-top: 1rem;
 }
 .events-table th,
 .events-table td {
-  border: 1px solid #888;
-  padding: 6px 10px;
+  border: 1px solid #ddd;
+  padding: 0.5rem;
   text-align: left;
 }
-.events-table th {
-  background: #eee;
-  position: sticky;
-  top: 65px;   /* odsunięcie o wysokość .controls-panel */
-  z-index: 3;
-}
-
-/* ewentualny komunikat błędu */
-.error {
-  color: red;
-  font-weight: bold;
-  margin: 20px 0;
+.events-table tr:nth-child(even) {
+  background: #fafafa;
 }

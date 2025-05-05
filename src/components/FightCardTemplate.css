@@ -1,0 +1,82 @@
+.fight-card {
+  width: 1080px;
+  margin: 1rem auto;
+  position: relative;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+/* GŁÓWNA WALKA */
+.main-fight {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  margin-bottom: 2rem;
+}
+.main-fight .fighter-box {
+  width: 250px;
+  height: 250px;
+  border: 4px solid white;
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+}
+.main-fight .fighter-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.main-fight .vs-label {
+  position: absolute;
+  font-size: 3rem;
+  color: white;
+  font-weight: bold;
+}
+
+/* PODWALKI – dwa na wiersz */
+.sub-fights {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  justify-items: center;
+}
+.sub-fights .fighter-box {
+  width: 200px;
+  height: 200px;
+  border: 3px solid white;
+  border-radius: 6px;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+}
+.sub-fights .fighter-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* NAPIS pod każdym boxem */
+.label {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  background: rgba(0,0,0,0.6);
+  color: white;
+  text-align: center;
+  padding: 0.25rem;
+  font-weight: bold;
+}
+
+/* Placeholder gdy puste zdjęcie */
+.placeholder {
+  width: 100%;
+  height: 100%;
+  background: #e33;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+}

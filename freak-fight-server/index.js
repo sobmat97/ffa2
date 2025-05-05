@@ -1,186 +1,192 @@
-// freak-fight-server/index.js
+// src/EventsPage.js
+import React, { useState, useEffect } from "react";
+import "./EventsPage.css";
 
-const express            = require("express");
-const path               = require("path");
-const cors               = require("cors");
-const { GoogleSpreadsheet } = require("google-spreadsheet");
-const creds              = require("./credentials.json"); // Twój plik z poświadczeniami
+export default function EventsPage() {
+  const [events, setEvents] = useState([]);
+  const [galas, setGalas] = useState([]);
+  const [form, setForm] = useState({
+    participants: "",
+    winner:       "",
+    gala:         "",
+    date:         "",
+    finishType:   "",
+    duration:     ""
+  });
+  const [loading, setLoading] = useState(true);
+  const [error, setError]     = useState(null);
 
-const app      = express();
-const PORT     = process.env.PORT || 3001;
-const SHEET_ID = "1qUPE8PXticebtACDkqPK7xBf1c-NZKzeQtx7db-fAAM";
+  // załaduj events, events2 i galas
+  useEffect(() => {
+    async function loadAll() {
+      try {
+        setLoading(true);
+        const [r1, r2, rg] = await Promise.all([
+          fetch("/api/events"),
+          fetch("/api/events2"),
+          fetch("/api/galas")
+        ]);
+        if (!r1.ok || !r2.ok || !rg.ok) throw new Error("Błąd z serwera");
+        const [e1, e2, g] = await Promise.all([r1.json(), r2.json(), rg.json()]);
 
-const basicAuth = require("express-basic-auth");
+        // normalizacja events2 → dorzucamy brakujące finishType/duration
+        const norm2 = e2.map(ev => ({
+          id:           ev.id,
+          participants: ev.participants,
+          winner:       ev.winner || "",
+          gala:         ev.gala   || "",
+          date:         ev.date   || "",
+          finishType:   "",
+          duration:     ""
+        }));
 
-// wymagaj logowania na każdy request:
-app.use(basicAuth({
-  users: { "admin": "hasło123" },
-  challenge: true
-}));
+        setEvents([ ...e1, ...norm2 ]);
+        setGalas(g);
+      } catch(err) {
+        console.error(err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadAll();
+  }, []);
 
-// — middleware —
-app.use(cors());
-app.use(express.json());
+  const handleChange = e => {
+    const { name, value } = e.target;
+    setForm(f => ({ ...f, [name]: value }));
+  };
 
-// — helper do arkuszy —
-async function getSheet(title) {
-  const doc = new GoogleSpreadsheet(SHEET_ID);
-  await doc.useServiceAccountAuth(creds);
-  await doc.loadInfo();
-  return title
-    ? doc.sheetsByTitle[title]
-    : doc.sheetsByIndex[0];
+  const handleSubmit = async e => {
+    e.preventDefault();
+    setError(null);
+    try {
+      const res = await fetch("/api/events", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify(form)
+      });
+      if (!res.ok) throw new Error("Nie udało się dodać walki");
+      // odśwież tylko 1v1 events
+      const fresh = await fetch("/api/events").then(r=> {
+        if (!r.ok) throw new Error("Błąd przy odświeżaniu");
+        return r.json();
+      });
+      // ponownie doklej norm2
+      const current2 = events.filter(ev=> ev.finishType==="" && ev.duration==="" && ev.id);
+      setEvents([ ...fresh, ...current2 ]);
+      // wyczyść formularz
+      setForm({
+        participants: "",
+        winner:       "",
+        gala:         "",
+        date:         "",
+        finishType:   "",
+        duration:     ""
+      });
+    } catch(err) {
+      console.error(err);
+      setError(err.message);
+    }
+  };
+
+  if (loading) return <p>Ładuję dane…</p>;
+  if (error)   return <p className="error">Błąd: {error}</p>;
+
+  return (
+    <div className="events-page">
+      <h2>Lista walk</h2>
+
+      <table className="events-table">
+        <thead>
+          <tr>
+            <th>Uczestnicy</th>
+            <th>Zwycięzca</th>
+            <th>Gala</th>
+            <th>Data</th>
+            <th>Finish</th>
+            <th>Czas</th>
+          </tr>
+        </thead>
+        <tbody>
+          {events.map((ev, i) => (
+            <tr key={`${ev.id}-${i}`}>
+              <td>{(ev.participants||[]).join(" / ")}</td>
+              <td>{ev.winner    || "—"}</td>
+              <td>{ev.gala      || "—"}</td>
+              <td>{ev.date      || "—"}</td>
+              <td>{ev.finishType|| "—"}</td>
+              <td>{ev.duration  || "—"}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <div className="add-event-form">
+        <h3>Dodaj walkę 1v1</h3>
+        {error && <p className="error">Błąd: {error}</p>}
+        <form onSubmit={handleSubmit}>
+          <label>
+            Uczestnicy (oddziel „;”):<br/>
+            <input
+              name="participants"
+              value={form.participants}
+              onChange={handleChange}
+              required
+            />
+          </label>
+          <label>
+            Zwycięzca:<br/>
+            <input
+              name="winner"
+              value={form.winner}
+              onChange={handleChange}
+            />
+          </label>
+          <label>
+            Gala:<br/>
+            <select
+              name="gala"
+              value={form.gala}
+              onChange={handleChange}
+              required
+            >
+              <option value="">— wybierz galę —</option>
+              {galas.map(g => (
+                <option key={g.id} value={g.gala}>
+                  {g.gala} ({g.date})
+                </option>
+              ))}
+            </select>
+          </label>
+          <label>
+            Data (DD.MM.YYYY):<br/>
+            <input
+              name="date"
+              value={form.date}
+              onChange={handleChange}
+              required
+            />
+          </label>
+          <label>
+            Finish:<br/>
+            <input
+              name="finishType"
+              value={form.finishType}
+              onChange={handleChange}
+            />
+          </label>
+          <label>
+            Czas:<br/>
+            <input
+              name="duration"
+              value={form.duration}
+              onChange={handleChange}
+            />
+          </label>
+          <button type="submit">Dodaj walkę</button>
+        </form>
+      </div>
+    </div>
+  );
 }
-
-// ─── Fighters API ────────────────────────────────────────────────
-
-// GET /api/fighters — lista
-app.get("/api/fighters", async (req, res) => {
-  console.log("🔔 [API] GET /api/fighters");
-  try {
-    const sheet   = await getSheet();
-    const rows    = await sheet.getRows();
-    const fighters = rows.map(r => ({
-      rowNumber:    r._rowNumber,
-      name:         r["IMIĘ I NAZWISKO"] || "",
-      nickname:     r["PSEUDONIM"]        || "",
-      phone:        r["NR TELEFONU"]      || "",
-      organization: r["ORGANIZACJA"]      || "",
-      lastFight:    r["OSTATNIA WALKA"]   || "",
-      weight:       r["WAGA"]             || "",
-      email:        r["E-MAIL"]           || ""
-    }));
-    res.json(fighters);
-  } catch (err) {
-    console.error("❌ [API] GET /api/fighters error:", err);
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// POST /api/fighters — dodaj nowego
-app.post("/api/fighters", async (req, res) => {
-  console.log("📥 [API] POST /api/fighters", req.body);
-  try {
-    const sheet = await getSheet();
-    await sheet.addRow({
-      "IMIĘ I NAZWISKO": req.body.name,
-      "PSEUDONIM":       req.body.nickname,
-      "NR TELEFONU":     req.body.phone,
-      "ORGANIZACJA":     req.body.organization,
-      "OSTATNIA WALKA":  req.body.lastFight,
-      "WAGA":            req.body.weight,
-      "E-MAIL":          req.body.email
-    });
-    res.json({ success: true });
-  } catch (err) {
-    console.error("❌ [API] POST /api/fighters error:", err);
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// PUT /api/fighters/:rowNumber — edytuj
-app.put("/api/fighters/:rowNumber", async (req, res) => {
-  const rowNum = parseInt(req.params.rowNumber, 10);
-  console.log(`🔄 [API] PUT /api/fighters/${rowNum}`, req.body);
-  try {
-    const sheet = await getSheet();
-    const rows  = await sheet.getRows();
-    const row   = rows.find(r => r._rowNumber === rowNum);
-    if (!row) return res.status(404).json({ error: "Nie znaleziono wiersza" });
-    Object.assign(row, {
-      "IMIĘ I NAZWISKO": req.body.name,
-      "PSEUDONIM":       req.body.nickname,
-      "NR TELEFONU":     req.body.phone,
-      "ORGANIZACJA":     req.body.organization,
-      "OSTATNIA WALKA":  req.body.lastFight,
-      "WAGA":            req.body.weight,
-      "E-MAIL":          req.body.email
-    });
-    await row.save();
-    res.json({ success: true });
-  } catch (err) {
-    console.error("❌ [API] PUT /api/fighters error:", err);
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// DELETE /api/fighters/:rowNumber — usuń
-app.delete("/api/fighters/:rowNumber", async (req, res) => {
-  const rowNum = parseInt(req.params.rowNumber, 10);
-  console.log(`🗑️ [API] DELETE /api/fighters/${rowNum}`);
-  try {
-    const sheet = await getSheet();
-    const rows  = await sheet.getRows();
-    const row   = rows.find(r => r._rowNumber === rowNum);
-    if (!row) return res.status(404).json({ error: "Nie znaleziono wiersza" });
-    await row.delete();
-    res.json({ success: true });
-  } catch (err) {
-    console.error("❌ [API] DELETE /api/fighters error:", err);
-    res.status(500).json({ error: err.message });
-  }
-});
-
-
-// ─── Events API ──────────────────────────────────────────────────
-
-// GET /api/events — lista eventów
-app.get("/api/events", async (req, res) => {
-  console.log("🔔 [API] GET /api/events");
-  try {
-    const sheet = await getSheet("Events");
-    const rows  = await sheet.getRows();
-    const events = rows.map(r => ({
-      id:         r._rowNumber,
-      fighter1:   r["Zawodnik 1"]         || "",
-      fighter2:   r["Zawodnik 2"]         || "",
-      winner:     r["Zwycięzca"]          || "",
-      gala:       r["Gala"]               || "",
-      date:       r["Data"]               || "",
-      finishType: r["Rodzaj skończenia"]  || "",
-      duration:   r["Czas trwania walki"] || ""
-    }));
-    res.json(events);
-  } catch (err) {
-    console.error("❌ [API] GET /api/events error:", err);
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// POST /api/events — dodaj event
-app.post("/api/events", async (req, res) => {
-  console.log("📥 [API] POST /api/events", req.body);
-  try {
-    const sheet = await getSheet("Events");
-    await sheet.addRow({
-      "Zawodnik 1":        req.body.fighter1,
-      "Zawodnik 2":        req.body.fighter2,
-      "Zwycięzca":         req.body.winner,
-      "Gala":              req.body.gala,
-      "Data":              req.body.date,
-      "Rodzaj skończenia": req.body.finishType,
-      "Czas trwania walki":req.body.duration
-    });
-    res.json({ success: true });
-  } catch (err) {
-    console.error("❌ [API] POST /api/events error:", err);
-    res.status(500).json({ error: err.message });
-  }
-});
-
-
-// ─── Statyczne serwowanie Reacta + catch-all ────────────────────
-
-app.use(express.static(path.join(__dirname, "..", "build")));
-
-// *Każde* żądanie niezwiązane z /api/* puść do front-endu:
-app.use((req, res) => {
-  res.sendFile(path.join(__dirname, "..", "build", "index.html"));
-});
-
-
-// ─── Start serwera ────────────────────────────────────────────────
-
-app.listen(PORT, "0.0.0.0", () => {
-  console.log(`🚀 Serwer działa na http://0.0.0.0:${PORT}`);
-});

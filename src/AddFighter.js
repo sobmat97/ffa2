@@ -1,3 +1,4 @@
+// src/AddFighter.js
 import React, { useState } from "react";
 
 export default function AddFighter({ onFighterAdded }) {
@@ -10,38 +11,66 @@ export default function AddFighter({ onFighterAdded }) {
     weight:      "",
     email:       ""
   });
-  const [error, setError] = useState(null);
+  const [avatarFile, setAvatarFile] = useState(null);
+  const [error, setError]           = useState(null);
 
   const handleChange = e => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData(f => ({ ...f, [e.target.name]: e.target.value }));
   };
 
-  const handleSubmit = e => {
+  const handleAvatarChange = e => {
+    setAvatarFile(e.target.files[0] || null);
+  };
+
+  const handleSubmit = async e => {
     e.preventDefault();
     setError(null);
-    fetch("/api/add-fighter", {
-      method:  "POST",
-      headers: { "Content-Type": "application/json" },
-      body:    JSON.stringify(formData)
-    })
-      .then(res => {
-        if (!res.ok) throw new Error(`Status ${res.status}`);
-        return res.json();
-      })
-      .then(() => {
-        alert("Zawodnik dodany!");
-        onFighterAdded();
-      })
-      .catch(err => {
-        console.error("[CLIENT] add-fighter error:", err);
-        setError(err.message);
+
+    try {
+      // 1) Dodaj fightera
+      const res = await fetch("/api/fighters", {
+        method:  "POST",
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify(formData)
       });
+      if (!res.ok) throw new Error(`Status ${res.status}`);
+      const created = await res.json();
+      const id = created.id;
+
+      // 2) Jeśli mamy avatar, wrzuć go
+      if (avatarFile) {
+        const fd = new FormData();
+        fd.append("avatar", avatarFile);
+        const uploadRes = await fetch(`/api/fighters/${id}/avatar`, {
+          method: "POST",
+          body:    fd
+        });
+        if (!uploadRes.ok) throw new Error(`Upload awataru: ${uploadRes.status}`);
+      }
+
+      // 3) Powiadom rodzica i wyczyść formę
+      onFighterAdded();
+      setFormData({
+        name:        "",
+        nickname:    "",
+        phone:       "",
+        organization:"",
+        lastFight:   "",
+        weight:      "",
+        email:       ""
+      });
+      setAvatarFile(null);
+    } catch (err) {
+      console.error("[AddFighter] error:", err);
+      setError(err.message);
+    }
   };
 
   return (
     <form onSubmit={handleSubmit} style={{ maxWidth: 400 }}>
       <h2>Dodaj zawodnika</h2>
       {error && <p style={{ color: "red" }}>Błąd: {error}</p>}
+
       {[
         { name: "name",        label: "Imię i nazwisko" },
         { name: "nickname",    label: "Pseudonim" },
@@ -49,7 +78,7 @@ export default function AddFighter({ onFighterAdded }) {
         { name: "organization",label: "Organizacja" },
         { name: "lastFight",   label: "Ostatnia walka" },
         { name: "weight",      label: "Waga" },
-        { name: "email",       label: "E‑mail" }
+        { name: "email",       label: "E-mail" }
       ].map(field => (
         <div key={field.name} style={{ marginBottom: 8 }}>
           <label style={{ display: "block", marginBottom: 4 }}>
@@ -64,7 +93,19 @@ export default function AddFighter({ onFighterAdded }) {
           />
         </div>
       ))}
-      <button type="submit">Wyślij</button>
+
+      <div style={{ marginBottom: 16 }}>
+        <label style={{ display: "block", marginBottom: 4 }}>
+          Avatar:
+        </label>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleAvatarChange}
+        />
+      </div>
+
+      <button type="submit">Dodaj zawodnika</button>
     </form>
   );
 }

@@ -1,133 +1,175 @@
-/* src/GalasPage.css */
-
+/* Ogólne */
 .galas-page {
-    padding: 20px;
-    max-width: 1000px;
-    margin: 0 auto;
-  }
-  
-  .galas-page h2 {
-    text-align: center;
-    margin-bottom: 16px;
-  }
-  
-  /* Kontener dla slidera */
-  .slider-container {
-    position: relative;
-    margin: 0 auto;
-  }
-  
-  /* Wymuszenie centrowania slide’a w rzędzie */
-  .slick-slide > div {
-    display: flex;
-    justify-content: center;
-  }
-  
-  /* Pojedyncza karta gali */
-  .gala-card {
-    background: rgba(255, 255, 255, 0.95);
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-    width: 160px;              /* szerokość karty */
-    padding: 12px;
-    margin: 8px 4px;           /* odstępy między kartami */
-    box-sizing: border-box;
-    text-align: center;
-    cursor: pointer;
-    transition: transform 0.2s;
-  }
-  
-  .gala-card:hover {
-    transform: translateY(-4px);
-  }
-  
-  /* Logo */
-  .gala-card img {
-    width: 80px;
-    height: 80px;
-    object-fit: contain;
-    margin: 0 auto 8px;
-  }
-  
-  /* Nazwa */
-  .gala-card h3 {
-    font-size: 1rem;
-    margin: 4px 0;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  
-  /* Data */
-  .gala-card p {
-    font-size: 0.85rem;
-    color: #555;
-    margin: 2px 0 0;
-  }
-  
-  /* Strzałki slidera */
-  .slick-prev,
-  .slick-next {
-    width: 30px;
-    height: 30px;
-    z-index: 2;
-  }
-  
-  .slick-prev:before,
-  .slick-next:before {
-    font-size: 30px;
-    color: #333;
-  }
-  
-  /* Pop-up z walkami */
-  .modal-overlay {
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0,0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    z-index: 100;
-  }
-  
-  .modal-content {
-    background: #fff;
-    border-radius: 8px;
-    max-width: 90%;
-    max-height: 90%;
-    overflow: auto;
-    padding: 20px;
-    position: relative;
-  }
-  
-  .close-btn {
-    position: absolute;
-    top: 8px; right: 8px;
-    background: transparent;
-    border: none;
-    font-size: 1.5rem;
-    cursor: pointer;
-  }
-  
-  .modal-content h3 {
-    margin-top: 0;
-  }
-  
-  .modal-content table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 12px;
-  }
-  
-  .modal-content th,
-  .modal-content td {
-    border: 1px solid #ccc;
-    padding: 6px 8px;
-    text-align: left;
-  }
-  
-  .modal-content th {
-    background: #f9f9f9;
-  }
-  
+  padding: 1.5rem;
+}
+.galas-page h1 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.btn-add {
+  background: #4caf50;
+  color: white;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+}
+
+/* Slider */
+.galas-slider {
+  position: relative;
+  margin-top: 1rem;
+  padding: 0 1rem;
+}
+.galas-slider .slick-list,
+.galas-slider .slick-track {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+.galas-slider .slick-slide {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+.galas-slider .slick-slide > div {
+  margin: 0 !important;
+}
+.slide-item {
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Strzałki */
+.slick-arrow {
+  display: block;
+  z-index: 2;
+}
+.slick-prev,
+.slick-next {
+  width: 50px;
+  height: 50px;
+}
+.slick-prev:before,
+.slick-next:before {
+  font-size: 50px;
+  color: #333;
+}
+
+/* Karty galer */
+.gala-card {
+  background: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 1rem;
+  text-align: center;
+  cursor: pointer;
+  width: 250px;
+  margin: 0 !important;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.gala-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+.gala-logo {
+  max-width: 80px;
+  margin-bottom: 0.5rem;
+}
+.gala-title {
+  margin: 0.5rem 0 0.25rem;
+  font-size: 1.1rem;
+}
+.gala-date {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.modal {
+  background: white;
+  padding: 2rem;
+  border-radius: 0.5rem;
+  width: 90%;
+  max-width: 1000px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+}
+.modal-close {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+.modal-logo {
+  position: absolute;
+  top: 2rem;
+  right: 3rem;
+  width: 90px;
+  height: auto;
+}
+
+/* Formularze */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+.form-actions {
+  grid-column: span 2;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+/* Tabela walk */
+.events-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+.events-table th,
+.events-table td {
+  border: 1px solid #ddd;
+  padding: 0.5rem;
+  text-align: left;
+}
+.row-actions button {
+  margin-right: 0.25rem;
+}
+
+/* Lista szczegółów gali */
+.gala-details-list {
+  list-style: none;
+  margin: 0 0 1rem;
+  padding: 0;
+}
+.gala-details-list li {
+  margin-bottom: 0.5rem;
+}
+.gala-details-list strong {
+  display: inline-block;
+  width: 80px;
+  font-weight: bold;
+}
+.galas-grid-slide {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
